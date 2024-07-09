@@ -1,12 +1,10 @@
 import streamlit as st
 import cv2
-import os
-from PIL import Image
 import numpy as np
 
 # Example function adapted for Streamlit
 def create_database():
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     cap = cv2.VideoCapture(0)
     id = st.text_input('Enter user id')
 
@@ -23,14 +21,16 @@ def create_database():
                 cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
                 cv2.waitKey(100)
 
-            cv2.imshow('img', img)
-            cv2.waitKey(1)
+            # Convert OpenCV image to PIL image for displaying in Streamlit
+            pil_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            pil_img = Image.fromarray(pil_img)
+            st.image(pil_img, channels="RGB", use_column_width=True)
 
             if sampleN > 40:
                 break
 
-        cap.release()
-        cv2.destroyAllWindows()
+    cap.release()
+    cv2.destroyAllWindows()
 
 # Streamlit App
 def main():
